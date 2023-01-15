@@ -70,3 +70,7 @@ void I2C_Address (uint8_t Address)
 	while (!(I2C1->SR1 & (1<<1)));  // wait for ADDR bit to set
 	uint8_t temp = I2C1->SR1 | I2C1->SR2;  // read SR1 and SR2 to clear the ADDR bit
 }
+void I2C_Stop (void)
+{
+	I2C1->CR1 |= (1<<9);  // Stop I2C
+}
