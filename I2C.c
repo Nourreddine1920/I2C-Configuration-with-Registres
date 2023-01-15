@@ -59,3 +59,14 @@ void I2C_Write (void){
 	while (!(I2C1->SR1 & (1<<2)));  // wait for BTF bit to set
 }
 
+void I2C_Address (uint8_t Address)
+{
+/**** STEPS FOLLOWED  ************
+1. Send the Slave Address to the DR Register
+2. Wait for the ADDR (bit 1 in SR1) to set. This indicates the end of address transmission
+3. clear the ADDR by reading the SR1 and SR2
+*/	
+	I2C1->DR = Address;  //  send the address
+	while (!(I2C1->SR1 & (1<<1)));  // wait for ADDR bit to set
+	uint8_t temp = I2C1->SR1 | I2C1->SR2;  // read SR1 and SR2 to clear the ADDR bit
+}
