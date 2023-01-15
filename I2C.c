@@ -74,3 +74,20 @@ void I2C_Stop (void)
 {
 	I2C1->CR1 |= (1<<9);  // Stop I2C
 }
+void I2C_WriteMulti (uint8_t *data, uint8_t size)
+{
+/**** STEPS FOLLOWED  ************
+1. Wait for the TXE (bit 7 in SR1) to set. This indicates that the DR is empty
+2. Keep Sending DATA to the DR Register after performing the check if the TXE bit is set
+3. Once the DATA transfer is complete, Wait for the BTF (bit 2 in SR1) to set. This indicates the end of LAST DATA transmission
+*/	
+	while (!(I2C1->SR1 & (1<<7)));  // wait for TXE bit to set 
+	while (size)
+	{
+		while (!(I2C1->SR1 & (1<<7)));  // wait for TXE bit to set 
+		I2C1->DR = (uint32_t )*data++;  // send data
+		size--;
+	}
+	
+	while (!(I2C1->SR1 & (1<<2)));  // wait for BTF to set
+}
